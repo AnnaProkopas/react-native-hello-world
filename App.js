@@ -40,6 +40,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'red',
   },
   text: {
+    flex: 1,
     fontSize: 32,
   },
 });
