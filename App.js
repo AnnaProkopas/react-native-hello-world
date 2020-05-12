@@ -14,6 +14,9 @@ class App extends Component {
     return (
       <View style={styles.container}>
         <Text style={styles.text}>Hello world!</Text>
+        <View style={styles.white}></View>
+        <View style={styles.blue}></View>
+        <View style={styles.red}></View>
       </View>
     );
   }
@@ -21,9 +24,20 @@ class App extends Component {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     backgroundColor: 'yellow',
-    width: 200,
-    height: 200,
+  },
+  white: {
+    flex: 1,
+    backgroundColor: 'white',
+  },
+  blue: {
+    flex: 1,
+    backgroundColor: 'blue',
+  },
+  red: {
+    flex: 1,
+    backgroundColor: 'red',
   },
   text: {
     fontSize: 32,
