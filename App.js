@@ -9,11 +9,11 @@
 import React, {Component} from 'react';
 import {View, Text, Button, StyleSheet} from 'react-native';
 
-function Header({title}) {
+function Header(props) {
   // {title} - props, сокращенно от properties
   return (
     <View style={styles.header}>
-      <Text style={styles.text}>{title}</Text>
+      <Text style={styles.text}>{props.title}</Text>
     </View>
   );
 }
