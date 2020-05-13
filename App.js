@@ -10,13 +10,25 @@ import React, {Component} from 'react';
 import {View, Text, Button, StyleSheet} from 'react-native';
 
 class App extends Component {
+  state = {
+    label: 'Initialized',
+  };
+
+  constructor(params) {
+    super();
+    console.log('Hello from Constructor');
+  }
+
+  componentDidMount() {
+    console.log('Hello from ComponentDidMount');
+    this.setState({label: 'Changed'});
+  }
+
   render() {
+    console.log('Hello from Render');
     return (
       <View style={styles.container}>
-        <Text style={styles.text}>Hello world!</Text>
-        <View style={styles.white}></View>
-        <View style={styles.blue}></View>
-        <View style={styles.red}></View>
+        <Text style={styles.text}>{this.state.label}</Text>
       </View>
     );
   }
@@ -25,22 +37,12 @@ class App extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: 'yellow',
   },
-  white: {
-    flex: 1,
-    backgroundColor: 'white',
-  },
-  blue: {
-    flex: 1,
-    backgroundColor: 'blue',
-  },
-  red: {
-    flex: 1,
-    backgroundColor: 'red',
-  },
   text: {
-    flex: 1,
     fontSize: 32,
   },
 });
