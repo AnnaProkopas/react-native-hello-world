@@ -6,81 +6,63 @@
  * @flow strict-local
  */
 
+import 'react-native-gesture-handler';
 import React, {Component} from 'react';
-import {View, Text, Button, StyleSheet, ScrollView, FlatList} from 'react-native';
-import Header from './header';
+import {
+  View,
+  Text,
+  Button,
+  StyleSheet,
+  ScrollView,
+  FlatList,
+} from 'react-native';
+import {NavigationContainer} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
+
+const Stack = createStackNavigator();
+
+function A(props) {
+  return (
+    <View style={styles.A}>
+      <Text>A</Text>
+      <Button title="Go to B" onPress={() => props.navigation.navigate('B')} />
+    </View>
+  );
+}
+
+function B(props) {
+  return (
+    <View style={styles.B}>
+      <Text>B</Text>
+      <Button title="Go to A" onPress={() => props.navigation.navigate('A')} />
+      <Button title="Go to B" onPress={() => props.navigation.push('B')} />
+      <Button title="Go back" onPress={() => props.navigation.goBack()} />
+      <Button title="Go back" onPress={() => props.navigation.pop()} />
+    </View>
+  );
+}
 
 class App extends Component {
-  url =
-    'https://covidtrackerapi.bsg.ox.ac.uk/api/v2/stringency/date-range/2020-03-07/2020-04-23';
-
-  state = {
-    json: null,
-  };
-
-  constructor(params) {
-    super();
-    console.log('Hello from Constructor');
-  }
-
-  componentDidMount() {
-    console.log('Hello from ComponentDidMount');
-    this.setState({label: 'Changed'});
-  }
-
-  async getData() {
-    try {
-      var response = await fetch(this.url);
-      var json = await response.json();
-      console.log(json);
-      this.setState({json: json.data});
-    } catch (error) {
-      alert('FAILED with ' + error.message);
-    }
-  }
-
   render() {
-    console.log('Hello from Render');
-    var flatData = [];
-    if (this.state.json !== null) {
-      var keys = Object.keys(this.state.json);
-      keys.forEach(i => {
-        var record = this.state.json[i].RUS;
-        flatData.push(record);
-      });
-      console.log(flatData);
-    }
     return (
-      <View style={styles.container}>
-        <Header title="COVID TRACKER" />
-        <Button title="Get data" onPress={() => this.getData()} />
-        <FlatList
-          ItemSeparatorComponent={() => <View style={styles.separator} />}
-          data={flatData}
-          renderItem={({item, index}) => (
-            <Text>
-              {index}: ({item.date_value}) {item.confirmed}
-            </Text>
-          )}
-          keyExtractor={i => i.date_value}
-        />
-      </View>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen name="A" component={A} />
+          <Stack.Screen name="B" component={B} />
+        </Stack.Navigator>
+      </NavigationContainer>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
+  A: {
     flex: 1,
-    flexDirection: 'column',
-    // backgroundColor: 'yellow',
+    backgroundColor: 'pink',
   },
-  text: {
-    fontSize: 32,
-  },
-  separator: {
-    height: 2,
-    backgroundColor: 'grey',
+  B: {
+    flex: 1,
+    backgroundColor: 'blue',
   },
 });
 
