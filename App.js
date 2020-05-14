@@ -7,7 +7,7 @@
  */
 
 import React, {Component} from 'react';
-import {View, Text, Button, StyleSheet, ScrollView} from 'react-native';
+import {View, Text, Button, StyleSheet, ScrollView, FlatList} from 'react-native';
 import Header from './header';
 
 class App extends Component {
@@ -54,9 +54,12 @@ class App extends Component {
       <View style={styles.container}>
         <Header title="COVID TRACKER" />
         <Button title="Get data" onPress={() => this.getData()} />
+        {/* <FlatList>
+
+        </FlatList> */}
         <ScrollView>
           {flatData.map(i => {
-            return <Text>{i.confirmed}</Text>;
+            return <Text key={i.date_value}>{i.confirmed}</Text>;
           })}
         </ScrollView>
       </View>
