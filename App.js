@@ -18,8 +18,10 @@ import {
 } from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
 const Stack = createStackNavigator();
+const Tab = createBottomTabNavigator();
 
 function A(props) {
   return (
@@ -33,11 +35,26 @@ function A(props) {
 function B(props) {
   return (
     <View style={styles.B}>
-      <Text>B</Text>
-      <Button title="Go to A" onPress={() => props.navigation.navigate('A')} />
-      <Button title="Go to B" onPress={() => props.navigation.push('B')} />
-      <Button title="Go back" onPress={() => props.navigation.goBack()} />
-      <Button title="Go back" onPress={() => props.navigation.pop()} />
+      <Tab.Navigator>
+        <Tab.Screen name="C" component={C} />
+        <Tab.Screen name="D" component={D} />
+      </Tab.Navigator>
+    </View>
+  );
+}
+
+function C(props) {
+  return (
+    <View style={styles.yellow}>
+      <Text>C</Text>
+    </View>
+  );
+}
+
+function D(props) {
+  return (
+    <View style={styles.red}>
+      <Text>D</Text>
     </View>
   );
 }
@@ -63,6 +80,14 @@ const styles = StyleSheet.create({
   B: {
     flex: 1,
     backgroundColor: 'blue',
+  },
+  yellow: {
+    flex: 1,
+    backgroundColor: 'yellow',
+  },
+  red: {
+    flex: 1,
+    backgroundColor: 'red',
   },
 });
 
