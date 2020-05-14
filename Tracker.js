@@ -8,7 +8,9 @@
 
 import React, {Component} from 'react';
 import {View, Text, Button, StyleSheet, FlatList} from 'react-native';   
+import {ScrollView} from 'react-native-gesture-handler';
 // import {Divider} from 'reat-native-elements';
+import Header from './header';
 
 class Tracker extends Component {
   url =
@@ -51,23 +53,22 @@ class Tracker extends Component {
     }
     return (
       <View style={styles.container}>
+        <Header title="COVID TRACKER" />
         <Button title="Get data" onPress={() => this.getData()} />
-        <FlatList
-          ItemSeparatorComponent={({leadingItem}) => {
-            if (leadingItem.confirmed <= 10) {
-              return <View style={styles.separator} />;
-            } else {
-              return null;
-            }
-          }}
-          data={flatData}
-          renderItem={({item, index}) => (
-            <Text>
-              {index}: ({item.date_value}) {item.confirmed}
-            </Text>
-          )}
-          keyExtractor={i => i.date_value}
-        />
+        <ScrollView horizontal={true}>
+          {flatData.map(i => {
+            return (
+              <View
+                style={{
+                  marginLeft: 1,
+                  height: i.deaths,
+                  width: 10,
+                  backgroundColor: 'black',
+                }}
+              />
+            );
+          })}
+        </ScrollView>
       </View>
     );
   }
