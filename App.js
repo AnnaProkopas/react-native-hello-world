@@ -7,12 +7,12 @@
  */
 
 import React, {Component} from 'react';
-import {View, Text, Button, StyleSheet} from 'react-native';
+import {View, Text, Button, StyleSheet, ScrollView} from 'react-native';
 import Header from './header';
 
 class App extends Component {
   url =
-    'https://covidtrackerapi.bsg.ox.ac.uk/api/v2/stringency/date-range/2020-04-07/2020-04-23';
+    'https://covidtrackerapi.bsg.ox.ac.uk/api/v2/stringency/date-range/2020-03-07/2020-04-23';
 
   state = {
     json: null,
@@ -54,9 +54,11 @@ class App extends Component {
       <View style={styles.container}>
         <Header title="COVID TRACKER" />
         <Button title="Get data" onPress={() => this.getData()} />
-        {flatData.map(i => {
-          return <Text>{i.confirmed}</Text>;
-        })}
+        <ScrollView>
+          {flatData.map(i => {
+            return <Text>{i.confirmed}</Text>;
+          })}
+        </ScrollView>
       </View>
     );
   }
