@@ -54,14 +54,15 @@ class App extends Component {
       <View style={styles.container}>
         <Header title="COVID TRACKER" />
         <Button title="Get data" onPress={() => this.getData()} />
-        {/* <FlatList>
-
-        </FlatList> */}
-        <ScrollView>
-          {flatData.map(i => {
-            return <Text key={i.date_value}>{i.confirmed}</Text>;
-          })}
-        </ScrollView>
+        <FlatList
+          data={flatData}
+          renderItem={({item, index}) => (
+            <Text>
+              {index}: ({item.date_value}) {item.confirmed}
+            </Text>
+          )}
+          keyExtractor={i => i.date_value}
+        />
       </View>
     );
   }
