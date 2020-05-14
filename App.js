@@ -8,19 +8,14 @@
 
 import React, {Component} from 'react';
 import {View, Text, Button, StyleSheet} from 'react-native';
-
-function Header(props) {
-  // {title} - props, сокращенно от properties
-  return (
-    <View style={styles.header}>
-      <Text style={styles.text}>{props.title}</Text>
-    </View>
-  );
-}
+import Header from './header';
 
 class App extends Component {
+  url =
+    'https://covidtrackerapi.bsg.ox.ac.uk/api/v2/stringency/date-range/2020-04-07/2020-04-23';
+
   state = {
-    label: 'Initialized',
+    json: null,
   };
 
   constructor(params) {
@@ -29,16 +24,39 @@ class App extends Component {
   }
 
   componentDidMount() {
-    console.log('Hello from ComponentDidMount'); 
+    console.log('Hello from ComponentDidMount');
     this.setState({label: 'Changed'});
+  }
+
+  async getData() {
+    try {
+      var response = await fetch(this.url);
+      var json = await response.json();
+      console.log(json);
+      this.setState({json: json.data});
+    } catch (error) {
+      alert('FAILED with ' + error.message);
+    }
   }
 
   render() {
     console.log('Hello from Render');
+    var flatData = [];
+    if (this.state.json !== null) {
+      var keys = Object.keys(this.state.json);
+      keys.forEach(i => {
+        var record = this.state.json[i].RUS;
+        flatData.push(record);
+      });
+      console.log(flatData);
+    }
     return (
       <View style={styles.container}>
-        <Header title="HEAD" />
-        <Text style={styles.text}>{this.state.label}</Text>
+        <Header title="COVID TRACKER" />
+        <Button title="Get data" onPress={() => this.getData()} />
+        {flatData.map(i => {
+          return <Text>{i.confirmed}</Text>;
+        })}
       </View>
     );
   }
@@ -52,10 +70,6 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 32,
-  },
-  header: {
-    flex: 1,
-    backgroundColor: 'blue',
   },
 });
 
