@@ -55,6 +55,7 @@ class App extends Component {
         <Header title="COVID TRACKER" />
         <Button title="Get data" onPress={() => this.getData()} />
         <FlatList
+          ItemSeparatorComponent={() => <View style={styles.separator} />}
           data={flatData}
           renderItem={({item, index}) => (
             <Text>
@@ -72,10 +73,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    backgroundColor: 'yellow',
+    // backgroundColor: 'yellow',
   },
   text: {
     fontSize: 32,
+  },
+  separator: {
+    height: 2,
+    backgroundColor: 'grey',
   },
 });
 
