@@ -7,7 +7,7 @@
  */
 
 import React, {Component} from 'react';
-import {View, Text, Button, StyleSheet, FlatList} from 'react-native';   
+import {View, Text, Button, StyleSheet, FlatList} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 // import {Divider} from 'reat-native-elements';
 import Header from './header';
