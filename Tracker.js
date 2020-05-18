@@ -14,7 +14,7 @@ import Header from './header';
 
 class Tracker extends Component {
   url =
-    'https://covidtrackerapi.bsg.ox.ac.uk/api/v2/stringency/date-range/2020-03-07/2020-04-23';
+    'https://raw.githubusercontent.com/Barrowland/covid-19-statistics-Primorsky-Krai/master/stat-covid-19-prim.json';
 
   state = {
     json: null,
@@ -34,7 +34,7 @@ class Tracker extends Component {
       var response = await fetch(this.url);
       var json = await response.json();
       console.log(json);
-      this.setState({json: json.data});
+      this.setState({json: json.days});
     } catch (error) {
       alert('FAILED with ' + error.message);
     }
@@ -44,31 +44,25 @@ class Tracker extends Component {
     console.log('Hello from Render');
     var flatData = [];
     if (this.state.json !== null) {
-      var keys = Object.keys(this.state.json);
-      keys.forEach(i => {
-        var record = this.state.json[i].RUS;
-        flatData.push(record);
-      });
+      for (var k in this.state.json) {
+        flatData.push(this.state.json[k]);
+      }
+      // var keys = Object.keys(this.state.json);
       console.log(flatData);
     }
     return (
       <View style={styles.container}>
         <Header title="COVID TRACKER" />
         <Button title="Get data" onPress={() => this.getData()} />
-        <ScrollView horizontal={true}>
-          {flatData.map(i => {
-            return (
-              <View
-                style={{
-                  marginLeft: 1,
-                  height: i.deaths,
-                  width: 10,
-                  backgroundColor: 'black',
-                }}
-              />
-            );
-          })}
-        </ScrollView>
+        <FlatList
+          data={flatData}
+          renderItem={({item, index}) => (
+            <Text>
+              {index}: ({item.date_value}) {item.confirmed}
+            </Text>
+          )}
+          keyExtractor={i => i.date_value}
+        />
       </View>
     );
   }
