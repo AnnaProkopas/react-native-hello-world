@@ -117,57 +117,6 @@ class Tracker extends Component {
             height={300}
           />
         </View>
-        {/* <ScrollView horizontal={true}>
-          <LineChart
-            data={{
-              labels: chart.date_value,
-              datasets: [
-                {
-                  data: chart.confirmed,
-                },
-                // {
-                //   data: chart.death,
-                // },
-                // {
-                //   data: chart.recovered,
-                // },
-              ],
-            }}
-            width={flatData.length * 30} // Dimensions.get('window').width} // from react-native
-            height={400}
-            yAxisLabel="$"
-            yAxisSuffix="k"
-            yAxisInterval={1} // optional, defaults to 1
-            chartConfig={{
-              backgroundColor: '#e26a00',
-              backgroundGradientFrom: '#fb8c00',
-              backgroundGradientTo: '#ffa726',
-              decimalPlaces: 2, // optional, defaults to 2dp
-              color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-              labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-              style: {
-                borderRadius: 16,
-              },
-              propsForDots: {
-                r: '6',
-                strokeWidth: '2',
-                stroke: '#ffa726',
-              },
-            }}
-            style={{marginVertical: 8}}
-          />
-        </ScrollView> */}
-        {/* <View style={styles.list}>
-          <FlatList
-            data={flatData}
-            renderItem={({item, index}) => (
-              <Text>
-                {index}: ({item.date_value}) {item.confirmed}
-              </Text>
-            )}
-            keyExtractor={i => i.date_value}
-          />
-        </View> */}
       </View>
     );
   }
@@ -177,7 +126,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    // backgroundColor: 'yellow',
   },
   header: {
     flex: 1,
