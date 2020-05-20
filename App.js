@@ -8,17 +8,19 @@
 
 import 'react-native-gesture-handler';
 import React, {Component} from 'react';
-import {StyleSheet} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {createStackNavigator} from '@react-navigation/stack';
 import AsyncStorage from '@react-native-community/async-storage';
 // import Tracker from './Tracker';
 import Detail from './Detail';
 import Tracker from './Tracker';
 
 const Tab = createBottomTabNavigator();
+const HomeStack = createStackNavigator();
 
-class App extends Component {
+class AppNavigator extends Component {
   url =
     'https://raw.githubusercontent.com/Barrowland/covid-19-statistics-Primorsky-Krai/master/stat-covid-19-prim.json';
 
@@ -48,14 +50,22 @@ class App extends Component {
 
   render() {
     return (
-      <NavigationContainer>
-        <Tab.Navigator>
-          <Tab.Screen name="Tracker" component={Tracker} />
-          <Tab.Screen name="Detail" component={Detail} />
-        </Tab.Navigator>
-      </NavigationContainer>
+      <Tab.Navigator>
+        <Tab.Screen name="Tracker" component={Tracker} />
+        <Tab.Screen name="Detail" component={Detail} />
+      </Tab.Navigator>
     );
   }
+}
+
+function App() {
+  return (
+    <NavigationContainer>
+      <HomeStack.Navigator>
+        <HomeStack.Screen name="COVID TRACKER" component={AppNavigator} />
+      </HomeStack.Navigator>
+    </NavigationContainer>
+  );
 }
 
 const styles = StyleSheet.create({});

@@ -9,7 +9,6 @@
 import React, {Component} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import PureChart from 'react-native-pure-chart';
-import Header from './Header';
 import AsyncStorage from '@react-native-community/async-storage';
 
 class Tracker extends Component {
@@ -75,7 +74,6 @@ class Tracker extends Component {
     console.log(chart.confirmed);
     return (
       <View style={styles.container}>
-        <Header style={styles.header} title="COVID TRACKER" />
         <View style={styles.banner}>
           <Text style={[styles.banner_text, styles.orange]}>
             confirmed: {confirmed}
