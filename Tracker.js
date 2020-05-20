@@ -7,50 +7,26 @@
  */
 
 import React, {Component} from 'react';
-import {
-  View,
-  Text,
-  Button,
-  StyleSheet,
-  FlatList,
-  Dimensions,
-} from 'react-native';
-import {ScrollView} from 'react-native-gesture-handler';
-// import {LineChart} from 'react-native-chart-kit';
+import {View, Text, StyleSheet} from 'react-native';
 import PureChart from 'react-native-pure-chart';
-// import {Divider} from 'reat-native-elements';
 import Header from './Header';
+import AsyncStorage from '@react-native-community/async-storage';
 
 class Tracker extends Component {
-  url =
-    'https://raw.githubusercontent.com/Barrowland/covid-19-statistics-Primorsky-Krai/master/stat-covid-19-prim.json';
-
   state = {
     json: null,
   };
 
-  constructor(params) {
-    super();
-    console.log('Hello from Constructor');
-  }
-
   componentDidMount() {
-    this.getData();
-    console.log('Hello from ComponentDidMount');
-  }
-
-  async getData() {
-    try {
-      var response = await fetch(this.url);
-      var json = await response.json();
-      this.setState({json: json.days});
-    } catch (error) {
-      alert('FAILED with ' + error.message);
-    }
+    AsyncStorage.getItem('@json-data').then(jsonValue => {
+      if (jsonValue != null) {
+        this.setState({json: JSON.parse(jsonValue).days});
+        console.log(this.state.json);
+      }
+    });
   }
 
   render() {
-    var flatData = [];
     var confirmed = 0,
       sick = 0,
       death = 0;
@@ -72,27 +48,24 @@ class Tracker extends Component {
         color: 'green',
       },
     };
-    if (this.state.json !== null) {
-      for (var k in this.state.json) {
-        flatData.push(this.state.json[k]);
-      }
-      confirmed = flatData[flatData.length - 1].confirmed;
-      sick = flatData[flatData.length - 1].sick;
-      death = flatData[flatData.length - 1].mortality;
-      chart.date_value = flatData.map(a => {
+    if (this.state.json) {
+      confirmed = this.state.json[this.state.json.length - 1].confirmed;
+      sick = this.state.json[this.state.json.length - 1].sick;
+      death = this.state.json[this.state.json.length - 1].mortality;
+      chart.date_value = this.state.json.map(a => {
         return a.date_value;
       });
-      chart.confirmed.data = flatData
+      chart.confirmed.data = this.state.json
         .map(a => {
           return {x: a.date_value, y: a.confirmed};
         })
         .reverse();
-      chart.death.data = flatData
+      chart.death.data = this.state.json
         .map(a => {
           return {x: a.date_value, y: a.mortality};
         })
         .reverse();
-      chart.recovered.data = flatData
+      chart.recovered.data = this.state.json
         .map(a => {
           return {x: a.date_value, y: a.recovered};
         })
