@@ -7,67 +7,87 @@
  */
 
 import React, {Component} from 'react';
-import {View, Text, Button, StyleSheet, FlatList} from 'react-native';   
-// import {Divider} from 'reat-native-elements';
+import {View, Text, StyleSheet} from 'react-native';
+import PureChart from 'react-native-pure-chart';
+import AsyncStorage from '@react-native-community/async-storage';
 
 class Tracker extends Component {
-  url =
-    'https://covidtrackerapi.bsg.ox.ac.uk/api/v2/stringency/date-range/2020-03-07/2020-04-23';
-
   state = {
     json: null,
   };
 
-  constructor(params) {
-    super();
-    console.log('Hello from Constructor');
-  }
-
   componentDidMount() {
-    console.log('Hello from ComponentDidMount');
-  }
-
-  async getData() {
-    try {
-      var response = await fetch(this.url);
-      var json = await response.json();
-      console.log(json);
-      this.setState({json: json.data});
-    } catch (error) {
-      alert('FAILED with ' + error.message);
-    }
+    AsyncStorage.getItem('@json-data').then(jsonValue => {
+      if (jsonValue != null) {
+        this.setState({json: JSON.parse(jsonValue).days});
+        console.log(this.state.json);
+      }
+    });
   }
 
   render() {
-    console.log('Hello from Render');
-    var flatData = [];
-    if (this.state.json !== null) {
-      var keys = Object.keys(this.state.json);
-      keys.forEach(i => {
-        var record = this.state.json[i].RUS;
-        flatData.push(record);
+    var confirmed = 0,
+      sick = 0,
+      death = 0;
+    var chart = {
+      date_value: ['2020-01-01'],
+      confirmed: {
+        seriesName: 'confirmed',
+        data: [{x: '01-01', y: 0}],
+        color: '#FF7000',
+      },
+      death: {
+        seriesName: 'death',
+        data: [{x: '01-01', y: 0}],
+        color: '#D52F00',
+      },
+      recovered: {
+        seriesName: 'recovered',
+        data: [{x: '01-01', y: 0}],
+        color: 'green',
+      },
+    };
+    if (this.state.json) {
+      confirmed = this.state.json[this.state.json.length - 1].confirmed;
+      sick = this.state.json[this.state.json.length - 1].sick;
+      death = this.state.json[this.state.json.length - 1].mortality;
+      chart.date_value = this.state.json.map(a => {
+        return a.date_value;
       });
-      console.log(flatData);
+      chart.confirmed.data = this.state.json
+        .map(a => {
+          return {x: a.date_value, y: a.confirmed};
+        })
+        .reverse();
+      chart.death.data = this.state.json
+        .map(a => {
+          return {x: a.date_value, y: a.mortality};
+        })
+        .reverse();
+      chart.recovered.data = this.state.json
+        .map(a => {
+          return {x: a.date_value, y: a.recovered};
+        })
+        .reverse();
     }
+    console.log(chart.death);
+    console.log(chart.confirmed);
     return (
       <View style={styles.container}>
-        <Button title="Get data" onPress={() => this.getData()} />
-        <FlatList
-          ItemSeparatorComponent={({leadingItem}) => {
-            if (leadingItem.confirmed <= 10) {
-              return <View style={styles.separator} />;
-            } else {
-              return null;
-            }
-          }}
-          data={flatData}
-          renderItem={({item, index}) => (
-            <Text>
-              {index}: ({item.date_value}) {item.confirmed}
-            </Text>
-          )}
-          keyExtractor={i => i.date_value}
-        />
+        <View style={styles.banner}>
+          <Text style={[styles.banner_text, styles.orange]}>
+            confirmed: {confirmed}
+          </Text>
+          <Text style={[styles.banner_text, styles.red]}>sick: {sick}</Text>
+          <Text style={[styles.banner_text]}>death: {death}</Text>
+        </View>
+        <View style={styles.list}>
+          <PureChart
+            data={[chart.confirmed, chart.death, chart.recovered]}
+            type="line"
+            height={300}
+          />
+        </View>
       </View>
     );
   }
@@ -77,10 +97,25 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    // backgroundColor: 'yellow',
   },
-  text: {
-    fontSize: 32,
+  header: {
+    flex: 1,
+  },
+  banner: {
+    flex: 3,
+  },
+  list: {
+    flex: 11,
+    justifyContent: 'center',
+  },
+  banner_text: {
+    fontSize: 30,
+  },
+  orange: {
+    color: '#FF7000',
+  },
+  red: {
+    color: '#D52F00',
   },
   separator: {
     height: 2,
