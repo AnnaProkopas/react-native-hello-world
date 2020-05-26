@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, FlatList} from 'react-native';
+import {View, Text, StyleSheet, FlatList, ScrollView} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 
 class Detail extends Component {
@@ -7,11 +7,11 @@ class Detail extends Component {
     json: [{date_value: '2020.01.01', confirmed: 0, mortality: 0}],
   };
 
-  componentWillMount() {
+  componentDidMount() {
     AsyncStorage.getItem('@json-data').then(jsonValue => {
       if (jsonValue != null) {
         this.setState({json: JSON.parse(jsonValue).days});
-        console.log(this.state.json);
+        // console.log(this.state.json);
       }
     });
   }

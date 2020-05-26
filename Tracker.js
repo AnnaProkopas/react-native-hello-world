@@ -20,7 +20,7 @@ class Tracker extends Component {
     AsyncStorage.getItem('@json-data').then(jsonValue => {
       if (jsonValue != null) {
         this.setState({json: JSON.parse(jsonValue).days});
-        console.log(this.state.json);
+        // console.log(this.state.json);
       }
     });
   }
@@ -70,8 +70,8 @@ class Tracker extends Component {
         })
         .reverse();
     }
-    console.log(chart.death);
-    console.log(chart.confirmed);
+    // console.log(chart.death);
+    // console.log(chart.confirmed);
     return (
       <View style={styles.container}>
         <View style={styles.banner}>
