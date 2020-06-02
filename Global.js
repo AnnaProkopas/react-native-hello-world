@@ -1,3 +1,6 @@
+import AsyncStorage from '@react-native-community/async-storage';
+import {readString} from 'react-papaparse';
+
 export default {
   confirmedToIndex: {
     "Afghanistan": [1],
@@ -596,10 +599,13 @@ export default {
     "Bhutan",
     "Bolivia",
     "Bosnia and Herzegovina",
+    "Botswana",
     "Brazil",
     "Brunei",
     "Bulgaria",
     "Burkina Faso",
+    "Burma",
+    "Burundi",
     "Cabo Verde",
     "Cambodia",
     "Cameroon",
@@ -609,16 +615,17 @@ export default {
     "Chile",
     "China",
     "Colombia",
+    "Comoros",
     "Congo (Brazzaville)",
     "Congo (Kinshasa)",
     "Costa Rica",
     "Cote d'Ivoire",
     "Croatia",
-    "Diamond Princess",
     "Cuba",
     "Cyprus",
     "Czechia",
     "Denmark",
+    "Diamond Princess",
     "Djibouti",
     "Dominica",
     "Dominican Republic",
@@ -638,8 +645,8 @@ export default {
     "Georgia",
     "Germany",
     "Ghana",
-    "Grenada",
     "Greece",
+    "Grenada",
     "Guatemala",
     "Guinea",
     "Guinea-Bissau",
@@ -662,16 +669,21 @@ export default {
     "Kazakhstan",
     "Kenya",
     "Korea, South",
+    "Kosovo",
     "Kuwait",
     "Kyrgyzstan",
+    "Laos",
     "Latvia",
     "Lebanon",
+    "Lesotho",
     "Liberia",
     "Libya",
     "Liechtenstein",
     "Lithuania",
     "Luxembourg",
+    "MS Zaandam",
     "Madagascar",
+    "Malawi",
     "Malaysia",
     "Maldives",
     "Mali",
@@ -711,15 +723,18 @@ export default {
     "Saint Lucia",
     "Saint Vincent and the Grenadines",
     "San Marino",
+    "Sao Tome and Principe",
     "Saudi Arabia",
     "Senegal",
     "Serbia",
     "Seychelles",
+    "Sierra Leone",
     "Singapore",
     "Slovakia",
     "Slovenia",
     "Somalia",
     "South Africa",
+    "South Sudan",
     "Spain",
     "Sri Lanka",
     "Sudan",
@@ -728,6 +743,7 @@ export default {
     "Switzerland",
     "Syria",
     "Taiwan*",
+    "Tajikistan",
     "Tanzania",
     "Thailand",
     "Timor-Leste",
@@ -735,34 +751,20 @@ export default {
     "Trinidad and Tobago",
     "Tunisia",
     "Turkey",
+    "US",
     "Uganda",
     "Ukraine",
     "United Arab Emirates",
     "United Kingdom",
     "Uruguay",
-    "US",
     "Uzbekistan",
     "Venezuela",
     "Vietnam",
+    "West Bank and Gaza",
+    "Western Sahara",
+    "Yemen",
     "Zambia",
     "Zimbabwe",
-    "West Bank and Gaza",
-    "Laos",
-    "Kosovo",
-    "Burma",
-    "MS Zaandam",
-    "Botswana",
-    "Burundi",
-    "Sierra Leone",
-    " Sint Eustatius and Saba",
-    "Malawi",
-    "South Sudan",
-    "Western Sahara",
-    "Sao Tome and Principe",
-    "Yemen",
-    "Comoros",
-    "Tajikistan",
-    "Lesotho"
   ],
   urlPrimorye: 
     'https://raw.githubusercontent.com/Barrowland/covid-19-statistics-Primorsky-Krai/master/stat-covid-19-prim.json',
@@ -772,4 +774,87 @@ export default {
     'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv',    
   urlWordRecovered:
   'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv',
+  
+  setJsonFromUrl(name) {
+    // console.log(name);
+    if (name == 'Primorsky krai') {
+      fetch(this.urlPrimorye)
+        .then(res => res.json())
+        .then(json => {
+          AsyncStorage.setItem('@json-data', JSON.stringify(json.days));
+        });
+    } else {
+      var startDate = new Date(Date.parse('1/22/2020'));
+      for (
+        var i = 0;
+        i < Math.ceil(Math.abs(Date.now() - startDate) / (1000 * 3600 * 24));
+        i++
+      ) {
+        json.push({
+          date_value: new Date(startDate.getDate() + i),
+          confirmed: 0,
+          sick: 0,
+          mortality: 0,
+          recovered: 0,
+        });
+      }
+      fetch(this.urlWordConfirmed)
+        .then(res => res.text())
+        .then(text => {
+          console.log(json);
+          var result = readString(text).data;
+          var n_column = result[0].length;
+          for (var pos = 0; pos < this.confirmedToIndex[name].length; pos++) {
+            for (var i = 4; i < n_column; i++) {
+              json[i - 4].confirmed += Number(
+                result[this.confirmedToIndex[name][pos]][i],
+              );
+            }
+          }
+          fetch(this.urlWordMortality)
+            .then(res => res.text())
+            .then(text => {
+              var result = readString(text).data;
+              var n_column = result[0].length;
+              for (
+                var pos = 0;
+                pos < this.mortalityToIndex[name].length;
+                pos++
+              ) {
+                for (var i = 4; i < n_column; i++) {
+                  json[i - 4].mortality += Number(
+                    result[this.mortalityToIndex[name][pos]][i],
+                  );
+                }
+              }
+              fetch(this.urlWordRecovered)
+                .then(res => res.text())
+                .then(text => {
+                  var result = readString(text).data;
+                  var n_column = result[0].length;
+                  for (
+                    var pos = 0;
+                    pos < this.recoveredToIndex[name].length;
+                    pos++
+                  ) {
+                    for (var i = 4; i < n_column; i++) {
+                      json[i - 4].recovered += Number(
+                        result[this.recoveredToIndex[name][pos]][i],
+                      );
+                      json[i - 4].sick =
+                        json[i - 4].confirmed -
+                        json[i - 4].mortality -
+                        json[i - 4].recovered;
+                    }
+                  }
+                  if (json[json.length - 1].confirmed == 0) {
+                    json.pop();
+                  }
+                  AsyncStorage.setItem('@json-data', JSON.stringify(json));
+                  console.log(json);
+                });
+            });
+        });
+    }
+  }
 };

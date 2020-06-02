@@ -8,15 +8,36 @@ class Detail extends Component {
   };
 
   componentDidMount() {
+    this._unsubscribe = this.props.navigation.addListener('focus', () => {
+      AsyncStorage.getItem('@json-data').then(jsonValue => {
+        if (jsonValue != null) {
+          this.setState({json: JSON.parse(jsonValue)});
+        }
+      });
+    });
     AsyncStorage.getItem('@json-data').then(jsonValue => {
       if (jsonValue != null) {
-        this.setState({json: JSON.parse(jsonValue).days});
-        // console.log(this.state.json);
+        this.setState({json: JSON.parse(jsonValue)});
+      }
+    });
+    AsyncStorage.getItem('@json-name').then(jsonValue => {
+      if (jsonValue != null) {
+        this.setState({name: jsonValue});
       }
     });
   }
 
   render() {
+    AsyncStorage.getItem('@json-name').then(jsonValue => {
+      if (jsonValue != this.state.name) {
+        this.setState({name: jsonValue});
+        AsyncStorage.getItem('@json-data').then(jsonValue => {
+          if (jsonValue != null) {
+            this.setState({json: JSON.parse(jsonValue)});
+          }
+        });
+      }
+    });
     return (
       <View style={styles.container}>
         <View style={{flexDirection: 'row'}}>

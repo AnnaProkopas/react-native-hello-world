@@ -10,23 +10,36 @@ import React, {Component} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import PureChart from 'react-native-pure-chart';
 import AsyncStorage from '@react-native-community/async-storage';
+import {useNavigation} from '@react-navigation/native';
 
 class Tracker extends Component {
   state = {
     json: null,
+    name: null,
   };
 
   componentDidMount() {
+    this._unsubscribe = this.props.navigation.addListener('focus', () => {
+      AsyncStorage.getItem('@json-data').then(jsonValue => {
+        if (jsonValue != null) {
+          this.setState({json: JSON.parse(jsonValue)});
+        }
+      });
+    });
     AsyncStorage.getItem('@json-data').then(jsonValue => {
       if (jsonValue != null) {
-        this.setState({json: JSON.parse(jsonValue).days});
-        // console.log(this.state.json);
+        this.setState({json: JSON.parse(jsonValue)});
+      }
+    });
+    AsyncStorage.getItem('@json-name').then(jsonValue => {
+      if (jsonValue != null) {
+        this.setState({name: jsonValue});
       }
     });
   }
 
   render() {
-    console.log('@@@@@');
+    console.log(this.state.name);
     var confirmed = 0,
       sick = 0,
       death = 0;
@@ -49,6 +62,7 @@ class Tracker extends Component {
       },
     };
     if (this.state.json) {
+      // console.log(this.state.json);
       confirmed = this.state.json[this.state.json.length - 1].confirmed;
       sick = this.state.json[this.state.json.length - 1].sick;
       death = this.state.json[this.state.json.length - 1].mortality;
