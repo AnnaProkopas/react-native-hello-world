@@ -26,6 +26,7 @@ class Tracker extends Component {
   }
 
   render() {
+    console.log('@@@@@');
     var confirmed = 0,
       sick = 0,
       death = 0;
