@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, FlatList, ScrollView} from 'react-native';
-import AsyncStorage from '@react-native-community/async-storage';
+import {View, Text, StyleSheet, FlatList} from 'react-native';
 
 class Detail extends Component {
   state = {
@@ -12,44 +11,10 @@ class Detail extends Component {
     for (var i = 0; i < d_v.length; i++) {
       obj.push({date_value: d_v[i], confirmed: conf[i], mortality: mort[i]});
     }
-    return obj;
-  }
-
-  componentDidMount() {
-    this._unsubscribe = this.props.navigation.addListener('focus', () => {
-      console.log(this.props.navigation.dangerouslyGetParent().getParam('json_data'));
-      // AsyncStorage.getItem('@json-name').then(jsonValue => {
-      //   if (jsonValue != this.state.name) {
-      //     this.setState({name: jsonValue});
-      //     AsyncStorage.getItem('@json-data').then(jsnV => {
-      //       if (jsnV != null) {
-      //         jsnV = JSON.parse(jsnV);
-      //         this.setState({
-      //           json: this.dataToList(
-      //             jsnV.date_value,
-      //             jsnV.confirmed,
-      //             jsnV.mortality,
-      //           ),
-      //         });
-      //       }
-      //     });
-      //   }
-      // });
-    });
-    // AsyncStorage.getItem('@json-data').then(jsonValue => {
-    //   if (jsonValue != null) {
-    //     this.setState({json: JSON.parse(jsonValue)});
-    //   }
-    // });
-    // AsyncStorage.getItem('@json-name').then(jsonValue => {
-    //   if (jsonValue != null) {
-    //     this.setState({name: jsonValue});
-    //   }
-    // });
+    return obj.reverse();
   }
 
   render() {
-    console.log(this.state.json);
     return (
       <View style={styles.container}>
         <View style={{flexDirection: 'row'}}>
@@ -68,7 +33,7 @@ class Detail extends Component {
           ItemSeparatorComponent={({leadingItem}) => (
             <View style={styles.separator} />
           )}
-          data={this.dataToList(this.state.json)}
+          data={this.dataToList(this.props.route.params.json_data)}
           renderItem={({item, index}) => (
             <View style={{flexDirection: 'row'}}>
               <View style={styles.cell}>

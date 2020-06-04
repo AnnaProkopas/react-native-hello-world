@@ -7,15 +7,15 @@
  */
 
 import React, {Component} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, ActivityIndicator, Button} from 'react-native';
 import PureChart from 'react-native-pure-chart';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-community/async-storage';
-import {useNavigation} from '@react-navigation/native';
 import setJsonFromUrl from './getData';
 
 class Tracker extends Component {
   state = {
+    visible: false,
     json: {
       date_value: ['2020-01-01'],
       confirmed: [0],
@@ -54,8 +54,6 @@ class Tracker extends Component {
   }
 
   updateChart() {
-    console.log('update chart');
-    console.log(this.state.json);
     var last = this.state.json.confirmed.length - 1;
     this.setState({confirmed: this.state.json.confirmed[last]});
     this.setState({death: this.state.json.mortality[last]});
@@ -80,55 +78,74 @@ class Tracker extends Component {
       this.state.json.recovered,
     ).reverse();
     this.setState({chart: chart});
-    // console.log(chart.confirmed.data);
   }
 
   componentDidMount() {
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
       AsyncStorage.getItem('@json-name').then(nameValue => {
-        console.log('tracker');
-        console.log(nameValue);
-        setJsonFromUrl(nameValue).then(jsn => {
-          this.setState({json: jsn});
-          console.log(this.state.jsn);
-          this.updateChart();
-        });
+        if (this.state.name != nameValue) {
+          this.setState({visible: true});
+          setJsonFromUrl(nameValue).then(jsn => {
+            this.setState({json: jsn});
+            this.updateChart();
+            this.setState({visible: false});
+          });
+          this.setState({name: nameValue});
+        }
       });
     });
     AsyncStorage.getItem('@json-name').then(nameValue => {
-      console.log('tracker');
-      console.log(nameValue);
+      this.setState({name: nameValue});
+      this.setState({visible: true});
       setJsonFromUrl(nameValue).then(jsn => {
         this.setState({json: jsn});
+        this.updateChart();
+        this.setState({visible: false});
       });
     });
   }
 
   render() {
-    console.log(this.state.chart);
     return (
-      <View style={styles.container}>
-        <View style={styles.banner}>
-          <Text style={[styles.banner_text, styles.orange]}>
-            confirmed: {this.state.confirmed}
-          </Text>
-          <Text style={[styles.banner_text, styles.red]}>sick: {this.state.sick}</Text>
-          <Text style={[styles.banner_text]}>death: {this.state.death}</Text>
+      <>
+        <Button
+          title="Choose another region"
+          onPress={() => this.props.navigation.navigate('choose region')}
+        />
+        <View
+          style={this.state.visible === true ? styles.stylOld : styles.container}>
+          {this.state.visible ? (
+            <ActivityIndicator
+            color="#009688"
+              size="large"
+              style={styles.ActivityIndicatorStyle}
+            />
+          ) : (
+            <>
+              <View style={styles.banner}>
+                <Text style={[styles.banner_text, styles.orange]}>
+                  confirmed: {this.state.confirmed}
+                </Text>
+                <Text style={[styles.banner_text, styles.red]}>sick: {this.state.sick}</Text>
+                <Text style={[styles.banner_text]}>death: {this.state.death}</Text>
+              </View>
+              <View style={styles.list}>
+                <PureChart
+                  data={[this.state.chart.confirmed, this.state.chart.death, this.state.chart.recovered]}
+                  type="line"
+                  height={300}
+                />
+              </View>
+              <Icon.Button
+                name="list"
+                backgroundColor="#3b5998"
+                onPress={() => this.props.navigation.navigate('detail', {json_data: this.state.json})}>
+                detail
+              </Icon.Button>
+            </>
+          )}
         </View>
-        <View style={styles.list}>
-          <PureChart
-            data={[this.state.chart.confirmed, this.state.chart.death, this.state.chart.recovered]}
-            type="line"
-            height={300}
-          />
-        </View>
-        <Icon.Button
-          name="list"
-          backgroundColor="#3b5998"
-          onPress={() => alert('detail')}>
-          detail
-        </Icon.Button>
-      </View>
+      </>
     );
   }
 }
@@ -160,6 +177,21 @@ const styles = StyleSheet.create({
   separator: {
     height: 2,
     backgroundColor: 'grey',
+  },
+  stylOld: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  styleNew: {
+    flex: 1,
+    flexDirection: 'column',
+  },
+  ActivityIndicatorStyle: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
   },
 });
 
