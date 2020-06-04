@@ -20,31 +20,52 @@ class Tracker extends Component {
 
   componentDidMount() {
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
-      AsyncStorage.getItem('@json-data').then(jsonValue => {
-        if (jsonValue != null) {
-          this.setState({json: JSON.parse(jsonValue)});
-        }
-      });
+      this.setState({json: this.props.route.params.json});
+      // AsyncStorage.getItem('@json-name').then(nameValue => {
+      //   console.log('name = ' + nameValue + ', read = ' + nameValue);
+      //   if (nameValue != this.state.name) {
+      //     console.log("update name");
+      //     this.setState({name: nameValue});
+      //     AsyncStorage.getItem('@json-data').then(jsonValue => {
+      //       if (jsonValue != null) {
+      //         console.log('update data');
+      //         console.log(JSON.parse(jsonValue));
+      //         this.setState({json: JSON.parse(jsonValue)});
+      //       }
+      //     });
+      //   }
+      // });
     });
-    AsyncStorage.getItem('@json-data').then(jsonValue => {
-      if (jsonValue != null) {
-        this.setState({json: JSON.parse(jsonValue)});
-      }
-    });
-    AsyncStorage.getItem('@json-name').then(jsonValue => {
-      if (jsonValue != null) {
-        this.setState({name: jsonValue});
-      }
-    });
+    // AsyncStorage.getItem('@json-data').then(jsonValue => {
+    //   if (jsonValue != null) {
+    //     this.setState({json: JSON.parse(jsonValue)});
+    //   }
+    // });
+    // AsyncStorage.getItem('@json-name').then(nameValue => {
+    //   if (nameValue != null) {
+    //     this.setState({name: nameValue});
+    //   }
+    // });
+  }
+
+  preparChart(x, y) {
+    var chart = [];
+    for (var i = 0; i < x.length; i++) {
+      chart.push({x: x[i], y: y[i]});
+    }
+    return chart;
   }
 
   render() {
-    console.log(this.state.name);
+    console.log('tracker');
+    // console.log(this.props);
+    // console.log(this.props.navigation.getParam('json'));
+    // console.log(this.props);
+    console.log(this.state.json);
     var confirmed = 0,
       sick = 0,
       death = 0;
     var chart = {
-      date_value: ['2020-01-01'],
       confirmed: {
         seriesName: 'confirmed',
         data: [{x: '01-01', y: 0}],
@@ -61,32 +82,40 @@ class Tracker extends Component {
         color: 'green',
       },
     };
-    if (this.state.json) {
-      // console.log(this.state.json);
-      confirmed = this.state.json[this.state.json.length - 1].confirmed;
-      sick = this.state.json[this.state.json.length - 1].sick;
-      death = this.state.json[this.state.json.length - 1].mortality;
-      chart.date_value = this.state.json.map(a => {
-        return a.date_value;
-      });
-      chart.confirmed.data = this.state.json
-        .map(a => {
-          return {x: a.date_value, y: a.confirmed};
-        })
-        .reverse();
-      chart.death.data = this.state.json
-        .map(a => {
-          return {x: a.date_value, y: a.mortality};
-        })
-        .reverse();
-      chart.recovered.data = this.state.json
-        .map(a => {
-          return {x: a.date_value, y: a.recovered};
-        })
-        .reverse();
+    if (this.state.json != null) {
+      // console.log(this.state.json["confirmed"]);
+      var last = this.state.json.confirmed.length - 1;
+      confirmed = this.state.json.confirmed[last];
+      death = this.state.json.mortality[last];
+      sick = confirmed - death - this.state.json.recovered[last];
+      var x = this.state.json.date_value;
+      chart.confirmed.data = this.preparChart(
+        x,
+        this.state.json.confirmed,
+      ).reverse();
+      chart.death.data = this.preparChart(
+        x,
+        this.state.json.mortality,
+      ).reverse();
+      chart.recovered.data = this.preparChart(
+        x,
+        this.state.json.recovered,
+      ).reverse();
+      console.log(chart.confirmed.data);
     }
-    // console.log(chart.death);
-    // console.log(chart.confirmed);
+    if (chart.death.data.length == 0) {
+      console.log('length = 0, but json ==')
+      console.log(this.state.json);
+      return (
+        <View style={styles.banner}>
+          <Text style={[styles.banner_text, styles.orange]}>
+            confirmed: {confirmed}
+          </Text>
+          <Text style={[styles.banner_text, styles.red]}>sick: {sick}</Text>
+          <Text style={[styles.banner_text]}>death: {death}</Text>
+        </View>
+      );
+    }
     return (
       <View style={styles.container}>
         <View style={styles.banner}>

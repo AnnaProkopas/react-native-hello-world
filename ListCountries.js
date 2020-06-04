@@ -1,11 +1,23 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, FlatList, Button} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  TouchableHighlight,
+} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import {useNavigation} from '@react-navigation/native';
 import Global from './Global';
+import setJsonFromUrl from './getData';
 
 class ListCountries extends Component {
-  state = {item: 'Primorsky krai'};
+  state = {item: 'Primorsky krai', visible: false};
+
+  updateData = jsn => {
+    // console.log(this.props);
+    this.props.route.params.updateData(jsn);
+  };
 
   componentDidMount() {
     AsyncStorage.getItem('@json-name').then(item => {
@@ -18,36 +30,49 @@ class ListCountries extends Component {
 
   render() {
     const {navigate} = this.props.navigation;
-
     return (
       <View>
+        {/* // style={this.state.visible === true ? styles.stylOld : styles.styleNew}>
+        // {this.state.visible ? (
+        //   <ActivityIndicator
+        //     color="#009688"
+        //     size="large"
+        //     style={styles.ActivityIndicatorStyle}
+        //   />
+        // ) : ( */}
         <FlatList
           data={Global.countries}
           renderItem={({item}) => {
             if (item == this.state.item) {
               return (
-                <Button
-                  title={item}
+                <TouchableHighlight
+                  underlayColor="#0288D1"
                   onPress={() => {
                     AsyncStorage.setItem('@json-name', item);
                     this.setState({item});
                   }}
-                  color="#64b5f6"
-                  style={styles.choosedBtn}
-                />
+                  style={[styles.choosedBtn, styles.btn]}>
+                  <Text>{item}</Text>
+                </TouchableHighlight>
               );
             } else {
               return (
-                <Button
-                  title={item}
+                <TouchableHighlight
+                  underlayColor="#0288D1"
                   onPress={() => {
-                    Global.setJsonFromUrl(item);
-                    AsyncStorage.setItem('@json-name', item);
-                    console.log(item);
+                    this.setState({visible: true});
+                    setJsonFromUrl(item).then(jsn => {
+                      console.log('i have been back');
+                      console.log(jsn);
+                      this.updateData(jsn);
+                      // this.setState({visible: false});
+                    });
                     this.setState({item});
                     navigate('covid tracker');
                   }}
-                />
+                  style={[styles.notChoosedBtn, styles.btn]}>
+                  <Text>{item}</Text>
+                </TouchableHighlight>
               );
             }
           }}
@@ -58,10 +83,35 @@ class ListCountries extends Component {
 }
 
 const styles = StyleSheet.create({
-  choosedBtn: {
-    color: 'black',
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  notChoosedBtn: {},
+  btn: {
+    alignItems: 'center',
+    borderWidth: 1,
+  },
+  choosedBtn: {
+    backgroundColor: '#64b5f6',
+  },
+  notChoosedBtn: {
+    backgroundColor: '#53a4e5',
+  },
+  stylOld: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  styleNew: {
+    flex: 1,
+  },
+  ActivityIndicatorStyle: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
+  },
 });
 
 export default ListCountries;

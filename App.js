@@ -17,6 +17,7 @@ import {readString} from 'react-papaparse';
 import Detail from './Detail';
 import Tracker from './Tracker';
 import Global from './Global';
+import setJsonFromUrl from './getData';
 import ListCountries from './ListCountries';
 
 const Tab = createBottomTabNavigator();
@@ -24,57 +25,68 @@ const Stack = createStackNavigator();
 
 class MainNavigator extends Component {
   state = {
-    json_version: 0,
+    json: null,
   };
 
-  constructor(params) {
-    super();
-    AsyncStorage.getItem('@json-version').then(ver => {
-      if (ver != null) {
-        this.state.json_version = ver;
-      }
-    });
-  }
-
   componentDidMount() {
-    AsyncStorage.getItem('@json-name').then(value => {
-      if (value == null) {
-        value = 'Primorsky krai';
-      }
-      this.setState({name: value});
-      Global.setJsonFromUrl(value);
-    });
+    if (this.props.json_data === null) {
+      AsyncStorage.getItem('@json-name').then(value => {
+        if (value == null) {
+          value = 'Primorsky krai';
+        }
+        this.state.name = value;
+        setJsonFromUrl(value).then(jsn => this.setState({json: jsn}));
+      });
+    } else {
+      this.state.json = this.props.json_data;
+    }
   }
 
   render() {
-    AsyncStorage.getItem('@json-name').then(value => {
-      if (value != this.state.name) {
-        this.setState({name: value});
-        this.setJsonFromUrl(value);
-      }
-    });
     return (
       <Tab.Navigator>
-        <Tab.Screen name="Tracker" component={Tracker} />
+        <Tab.Screen
+          name="Tracker"
+          component={Tracker}
+          initialParams={{json: this.props.json_data}}
+        />
         <Tab.Screen name="Detail" component={Detail} />
       </Tab.Navigator>
     );
   }
 }
 
-function MainToList(props) {
-  return (
-    <>
-      <Button
-        title="Choose another region"
-        onPress={() => props.navigation.navigate('choose region')}
-      />
-      <MainNavigator />
-    </>
-  );
+class MainToList extends Component {
+  state = {
+    json: null,
+  };
+  updateData = jsn => {
+    console.log('i catch it!!');
+    this.setState({json: jsn});
+    this.props.navigation.navigate('Tracker', {json: jsn});
+  };
+  render() {
+    return (
+      <>
+        <Button
+          title="Choose another region"
+          onPress={() =>
+            this.props.navigation.navigate('choose region', {
+              updateData: this.updateData,
+            })
+          }
+        />
+        <MainNavigator json_data={this.state.json} />
+      </>
+    );
+  }
 }
 
-function App(props) {
+function App() {
+  // constructor() {
+
+  // }
+
   return (
     <NavigationContainer>
       <Stack.Navigator>
@@ -84,7 +96,6 @@ function App(props) {
     </NavigationContainer>
   );
 }
-
 const styles = StyleSheet.create({});
 
 export default App;
