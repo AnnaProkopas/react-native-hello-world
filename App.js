@@ -82,10 +82,29 @@ class MainToList extends Component {
   }
 }
 
-function App() {
-  // constructor() {
+async function updateDb() {
+  fetch(Global.urlPrimorye)
+    .then(res => res.json())
+    .then(json => AsyncStorage.setItem('@json-prim', JSON.stringify(json)));
+  fetch(Global.urlWordConfirmed)
+    .then(res => res.text())
+    .then(text => AsyncStorage.setItem('@json-confirm', text));
+  fetch(Global.urlWordMortality)
+    .then(res => res.text())
+    .then(text => AsyncStorage.setItem('@json-death', text));
+  fetch(Global.urlWordRecovered)
+    .then(res => res.text())
+    .then(text => AsyncStorage.setItem('@json-recover', text));
+}
 
-  // }
+function App() {
+  updateDb();
+
+  AsyncStorage.getItem('@json-name').then(item => {
+    if (item === null) {
+      AsyncStorage.setItem('@json-name', 'Primorsky krai');
+    }
+  });
 
   return (
     <NavigationContainer>

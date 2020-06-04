@@ -32,14 +32,6 @@ class ListCountries extends Component {
     const {navigate} = this.props.navigation;
     return (
       <View>
-        {/* // style={this.state.visible === true ? styles.stylOld : styles.styleNew}>
-        // {this.state.visible ? (
-        //   <ActivityIndicator
-        //     color="#009688"
-        //     size="large"
-        //     style={styles.ActivityIndicatorStyle}
-        //   />
-        // ) : ( */}
         <FlatList
           data={Global.countries}
           renderItem={({item}) => {
@@ -60,13 +52,12 @@ class ListCountries extends Component {
                 <TouchableHighlight
                   underlayColor="#0288D1"
                   onPress={() => {
-                    this.setState({visible: true});
-                    setJsonFromUrl(item).then(jsn => {
-                      console.log('i have been back');
-                      console.log(jsn);
-                      this.updateData(jsn);
-                      // this.setState({visible: false});
-                    });
+                    // setJsonFromUrl(item).then(jsn => {
+                    //   console.log('i have been back');
+                    //   console.log(jsn);
+                    //   this.updateData(jsn);
+                    // });
+                    AsyncStorage.setItem('@json-name', item);
                     this.setState({item});
                     navigate('covid tracker');
                   }}
