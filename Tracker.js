@@ -7,9 +7,16 @@
  */
 
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, ActivityIndicator, Button} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+  Button,
+  TouchableHighlight,
+} from 'react-native';
 import PureChart from 'react-native-pure-chart';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import {Icon} from 'react-native-elements';
 import AsyncStorage from '@react-native-community/async-storage';
 import setJsonFromUrl from './getData';
 
@@ -82,6 +89,7 @@ class Tracker extends Component {
 
   componentDidMount() {
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
+      console.log(this.props);
       AsyncStorage.getItem('@json-name').then(nameValue => {
         if (this.state.name != nameValue) {
           this.setState({visible: true});
@@ -108,12 +116,17 @@ class Tracker extends Component {
   render() {
     return (
       <>
-        <Button
-          title="Choose another region"
-          onPress={() => this.props.navigation.navigate('choose region')}
-        />
+        <View style={[styles.header, styles.white]}>
+          <Text style={styles.header_text}>{this.state.name}</Text>
+          <TouchableHighlight
+            underlayColor="#798fbd"
+            style={styles.choose_btn}
+            onPress={() => this.props.navigation.navigate('choose region')}>
+            <Text style={styles.choose_btn_text}>choose another region</Text>
+          </TouchableHighlight>
+        </View>
         <View
-          style={this.state.visible === true ? styles.stylOld : styles.container}>
+          style={[this.state.visible === true ? styles.stylOld : styles.container, styles.white]}>
           {this.state.visible ? (
             <ActivityIndicator
             color="#009688"
@@ -136,12 +149,14 @@ class Tracker extends Component {
                   height={300}
                 />
               </View>
-              <Icon.Button
-                name="list"
-                backgroundColor="#3b5998"
-                onPress={() => this.props.navigation.navigate('detail', {json_data: this.state.json})}>
-                detail
-              </Icon.Button>
+              <TouchableHighlight
+                underlayColor="#798fbd"
+                style={styles.detail_btn}
+                onPress={() =>
+                  this.props.navigation.navigate('detail', {json_data: this.state.json})
+                }>
+                <Icon name="list" color="#fff" />
+              </TouchableHighlight>
             </>
           )}
         </View>
@@ -151,12 +166,12 @@ class Tracker extends Component {
 }
 
 const styles = StyleSheet.create({
+  white: {
+    backgroundColor: 'white',
+  },
   container: {
     flex: 1,
     flexDirection: 'column',
-  },
-  header: {
-    flex: 1,
   },
   banner: {
     flex: 3,
@@ -182,6 +197,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: 'white',
   },
   styleNew: {
     flex: 1,
@@ -192,6 +208,38 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     position: 'absolute',
+  },
+  detail_btn: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: "flex-end",
+    margin: 20,
+    width: 60,
+    height: 60,
+    backgroundColor: '#3b5998',
+    borderRadius: 50,
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignContent: 'center',
+    height: 45,
+    padding: 5,
+  },
+  header_text: {
+    fontSize: 18,
+    alignSelf: 'center',
+  },
+  choose_btn: {
+    backgroundColor: '#3b5998',
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 190,
+  },
+  choose_btn_text: {
+    color: 'white',
+    fontSize: 16,
   },
 });
 

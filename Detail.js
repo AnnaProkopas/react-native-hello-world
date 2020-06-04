@@ -28,11 +28,13 @@ class Detail extends Component {
             <Text style={styles.header_table_text}>death</Text>
           </View>
         </View>
-        <View style={{height: 4, backgroundColor: 'white'}} />
+        <View style={{height: 2, backgroundColor: '#fff'}} />
+        <View style={{height: 2, backgroundColor: '#eee'}} />
+        <View style={{height: 2, backgroundColor: '#fff'}} />
         <FlatList
-          ItemSeparatorComponent={({leadingItem}) => (
-            <View style={styles.separator} />
-          )}
+          ItemSeparatorComponent={({leadingItem}) => {
+            return <View style={{height: 6, backgroundColor: '#fff'}} />;
+          }}
           data={this.dataToList(this.props.route.params.json_data)}
           renderItem={({item, index}) => (
             <View style={{flexDirection: 'row'}}>
@@ -57,7 +59,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    // backgroundColor: 'yellow',
   },
   cell: {
     flex: 1,
@@ -65,6 +66,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     alignContent: 'center',
+    backgroundColor: 'white',
   },
   header_table_text: {
     fontSize: 19,
@@ -73,7 +75,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   separator: {
-    height: 6,
+    height: 8,
+    backgroundColor: '#fff',
   },
 });
 
