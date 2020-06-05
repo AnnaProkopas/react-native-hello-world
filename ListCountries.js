@@ -39,7 +39,9 @@ class ListCountries extends Component {
                   }
                 }}
                 style={[
-                  item == this.state.item ? styles.choosedBtn : styles.notChoosedBtn,
+                  item == this.state.item
+                    ? styles.choosedBtn
+                    : styles.notChoosedBtn,
                   styles.btn,
                 ]}>
                 <Text>{item}</Text>
@@ -55,7 +57,6 @@ class ListCountries extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
   },
   btn: {
@@ -70,20 +71,6 @@ const styles = StyleSheet.create({
   },
   notChoosedBtn: {
     backgroundColor: '#c7e1ff',
-  },
-  stylOld: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  styleNew: {
-    flex: 1,
-  },
-  ActivityIndicatorStyle: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'absolute',
   },
 });
 

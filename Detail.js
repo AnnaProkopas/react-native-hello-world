@@ -8,8 +8,12 @@ class Detail extends Component {
 
   dataToList({date_value: d_v, confirmed: conf, mortality: mort}) {
     var obj = [];
-    for (var i = 0; i < d_v.length; i++) {
-      obj.push({date_value: d_v[i], confirmed: conf[i], mortality: mort[i]});
+    for (var i = 1; i < d_v.length; i++) {
+      obj.push({
+        date_value: d_v[i],
+        confirmed: conf[i] - conf[i - 1],
+        mortality: mort[i] - mort[i - 1],
+      });
     }
     return obj.reverse();
   }
@@ -17,7 +21,7 @@ class Detail extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <View style={{flexDirection: 'row'}}>
+        <View style={styles.row}>
           <View style={styles.cell}>
             <Text style={styles.header_table_text}>date</Text>
           </View>
@@ -25,7 +29,7 @@ class Detail extends Component {
             <Text style={styles.header_table_text}>confirmed</Text>
           </View>
           <View style={styles.cell}>
-            <Text style={styles.header_table_text}>death</Text>
+            <Text style={styles.header_table_text}>died</Text>
           </View>
         </View>
         <View style={{height: 2, backgroundColor: '#fff'}} />
@@ -37,7 +41,7 @@ class Detail extends Component {
           }}
           data={this.dataToList(this.props.route.params.json_data)}
           renderItem={({item, index}) => (
-            <View style={{flexDirection: 'row'}}>
+            <View style={styles.row}>
               <View style={styles.cell}>
                 <Text style={styles.cell_text}>{item.date_value}</Text>
               </View>
@@ -60,23 +64,21 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
   },
+  row: {
+    flexDirection: 'row',
+  },
   cell: {
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'center',
-    alignItems: 'center',
     alignContent: 'center',
     backgroundColor: 'white',
-  },
-  header_table_text: {
-    fontSize: 19,
   },
   cell_text: {
     fontSize: 16,
   },
-  separator: {
-    height: 8,
-    backgroundColor: '#fff',
+  header_table_text: {
+    fontSize: 19,
   },
 });
 

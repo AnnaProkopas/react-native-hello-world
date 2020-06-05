@@ -12,7 +12,6 @@ import {
   Text,
   StyleSheet,
   ActivityIndicator,
-  Button,
   TouchableHighlight,
 } from 'react-native';
 import PureChart from 'react-native-pure-chart';
@@ -126,10 +125,13 @@ class Tracker extends Component {
           </TouchableHighlight>
         </View>
         <View
-          style={[this.state.visible === true ? styles.stylOld : styles.container, styles.white]}>
+          style={[
+            this.state.visible === true ? styles.load : styles.container,
+            styles.white,
+          ]}>
           {this.state.visible ? (
             <ActivityIndicator
-            color="#009688"
+              color="#3b5998"
               size="large"
               style={styles.ActivityIndicatorStyle}
             />
@@ -139,12 +141,20 @@ class Tracker extends Component {
                 <Text style={[styles.banner_text, styles.orange]}>
                   confirmed: {this.state.confirmed}
                 </Text>
-                <Text style={[styles.banner_text, styles.red]}>sick: {this.state.sick}</Text>
-                <Text style={[styles.banner_text]}>death: {this.state.death}</Text>
+                <Text style={[styles.banner_text, styles.red]}>
+                  sick: {this.state.sick}
+                </Text>
+                <Text style={[styles.banner_text]}>
+                  died: {this.state.death}
+                </Text>
               </View>
-              <View style={styles.list}>
+              <View style={styles.chart}>
                 <PureChart
-                  data={[this.state.chart.confirmed, this.state.chart.death, this.state.chart.recovered]}
+                  data={[
+                    this.state.chart.confirmed,
+                    this.state.chart.death,
+                    this.state.chart.recovered,
+                  ]}
                   type="line"
                   height={300}
                 />
@@ -153,7 +163,9 @@ class Tracker extends Component {
                 underlayColor="#798fbd"
                 style={styles.detail_btn}
                 onPress={() =>
-                  this.props.navigation.navigate('detail', {json_data: this.state.json})
+                  this.props.navigation.navigate('detail', {
+                    json_data: this.state.json,
+                  })
                 }>
                 <Icon name="list" color="#fff" />
               </TouchableHighlight>
@@ -166,9 +178,6 @@ class Tracker extends Component {
 }
 
 const styles = StyleSheet.create({
-  white: {
-    backgroundColor: 'white',
-  },
   container: {
     flex: 1,
     flexDirection: 'column',
@@ -176,12 +185,12 @@ const styles = StyleSheet.create({
   banner: {
     flex: 3,
   },
-  list: {
-    flex: 11,
-    justifyContent: 'center',
-  },
   banner_text: {
     fontSize: 30,
+  },
+  chart: {
+    flex: 11,
+    justifyContent: 'center',
   },
   orange: {
     color: '#FF7000',
@@ -189,19 +198,14 @@ const styles = StyleSheet.create({
   red: {
     color: '#D52F00',
   },
-  separator: {
-    height: 2,
-    backgroundColor: 'grey',
+  white: {
+    backgroundColor: 'white',
   },
-  stylOld: {
+  load: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'white',
-  },
-  styleNew: {
-    flex: 1,
-    flexDirection: 'column',
   },
   ActivityIndicatorStyle: {
     flex: 1,
@@ -212,7 +216,7 @@ const styles = StyleSheet.create({
   detail_btn: {
     alignItems: 'center',
     justifyContent: 'center',
-    alignSelf: "flex-end",
+    alignSelf: 'flex-end',
     margin: 20,
     width: 60,
     height: 60,
@@ -220,8 +224,8 @@ const styles = StyleSheet.create({
     borderRadius: 50,
   },
   header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignContent: 'center',
     height: 45,
     padding: 5,
