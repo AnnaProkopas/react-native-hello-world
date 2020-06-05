@@ -21,7 +21,7 @@ Home screen | Detail screen | List screen
 
 ```
 git clone https://github.com/AnnaProkopas/react-native-covid-tracker
-cd react-native-hello-world
+cd react-native-covid-tracker
 npm install
 npm start
 ```
