@@ -17,7 +17,7 @@ import {
 import PureChart from 'react-native-pure-chart';
 import {Icon} from 'react-native-elements';
 import AsyncStorage from '@react-native-community/async-storage';
-import setJsonFromUrl from './getData';
+import setJsonFromUrl from './script/getData';
 
 class Tracker extends Component {
   state = {

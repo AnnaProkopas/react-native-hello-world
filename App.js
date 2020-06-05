@@ -14,7 +14,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import AsyncStorage from '@react-native-community/async-storage';
 import Detail from './Detail';
 import Tracker from './Tracker';
-import Global from './Global';
+import Global from './constants/global';
 import ListCountries from './ListCountries';
 
 const Stack = createStackNavigator();

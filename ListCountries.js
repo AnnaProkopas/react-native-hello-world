@@ -7,7 +7,7 @@ import {
   TouchableHighlight,
 } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
-import Global from './Global';
+import Global from './constants/global';
 
 class ListCountries extends Component {
   state = {item: 'Primorsky krai', visible: false};
